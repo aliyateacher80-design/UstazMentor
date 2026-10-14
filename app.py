@@ -2,17 +2,23 @@ import streamlit as st
 import pandas as pd
 from datetime import datetime
 
-# Беттің баптаулары
+# Беттің баптаулары (Бүйірлік панельді жауып қою)
 st.set_page_config(
     page_title="UstazMentor - Цифрлық платформа",
     page_icon="🎓",
-    layout="wide"
+    layout="wide",
+    initial_sidebar_state="collapsed"
 )
 
-# 🌟 КАСТОМДЫ CSS СТИЛЬДЕР (Заманауи дизайн, көлеңкелер, градиенттер)
+# 🌟 КАСТОМДЫ CSS СТИЛЬДЕР (Бүйірлік панельсіз, басты беттегі батырмалар дизайны)
 st.markdown("""
 <style>
-    /* Негізгі фон мен шрифт */
+    /* Бүйірлік панельді толығымен жасыру */
+    [data-testid="stSidebar"] {
+        display: none;
+    }
+    
+    /* Негізгі фон */
     .stApp {
         background-color: #f8fafc;
         font-family: 'Inter', sans-serif;
@@ -22,10 +28,10 @@ st.markdown("""
     .header-card {
         background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
         color: white;
-        padding: 2.5rem;
+        padding: 2.2rem;
         border-radius: 20px;
         box-shadow: 0 10px 25px -5px rgba(59, 130, 246, 0.3);
-        margin-bottom: 2rem;
+        margin-bottom: 1.5rem;
         text-align: center;
     }
     
@@ -33,23 +39,11 @@ st.markdown("""
         font-size: 2.5rem !important;
         font-weight: 800;
         margin-bottom: 0.5rem;
-        letter-spacing: -0.5px;
     }
     
     .header-subtitle {
         font-size: 1.1rem;
         opacity: 0.9;
-        font-weight: 300;
-    }
-
-    /* Ақ карточкалар */
-    .custom-card {
-        background-color: #ffffff;
-        padding: 1.8rem;
-        border-radius: 16px;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
-        border: 1px solid #e2e8f0;
-        margin-bottom: 1.5rem;
     }
 
     /* Контекст блогы (Өмірлік жағдаят) */
@@ -57,17 +51,16 @@ st.markdown("""
         background-color: #eff6ff;
         border-left: 5px solid #3b82f6;
         padding: 1.2rem;
-        border-radius: 8px;
+        border-radius: 12px;
         color: #1e40af;
         font-size: 1.05rem;
         margin-bottom: 1rem;
     }
     
-    /* Батырмалар стилі */
+    /* Батырмаларды сәндеу */
     .stButton>button {
         border-radius: 12px !important;
         font-weight: 600 !important;
-        transition: all 0.3s ease !important;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -96,31 +89,36 @@ if "school_data" not in st.session_state:
 if "submissions" not in st.session_state:
     st.session_state.submissions = []
 
-# 🌟 ЗАМАНАУИ ХЕДЕР (Басты баннер)
+# 🌟 1. КӨК БАННЕР (Хедер)
 st.markdown("""
 <div class="header-card">
     <div class="header-title">🎓 UstazMentor</div>
     <div class="header-subtitle">Информатика мұғалімдеріне арналған функционалдық сауаттылық платформасы</div>
-    <p style="margin-top: 10px; font-style: italic; opacity: 0.8; font-size: 0.95rem;">
-        ✨ Бір тақырып — бір өмірлік жағдаят — үш деңгей — нақты нәтиже!
-    </p>
 </div>
 """, unsafe_allow_html=True)
 
-# Бүйірлік меню
-st.sidebar.image("https://img.icons8.com/isometric/100/teacher.png", width=80)
-st.sidebar.title("Навигация")
-mode = st.sidebar.radio("🧭 Режимді таңдаңыз:", ["👩‍🏫 Мұғалім кабинеті", "👨‍🎓 Оқушы режимі"])
+# 🌟 2. БАСТЫ БЕТТЕГІ РЕЖИМДІ ТАҢДАУ ТҮЙМЕЛЕРІ (Вкладкалар)
+tab_teacher, tab_student = st.tabs(["👩‍🏫 Мұғалім кабинеті", "👨‍🎓 Оқушы режимі"])
 
-if mode == "👩‍🏫 Мұғалім кабинеті":
+# --- 👩‍🏫 МҰҒАЛІМ КАБИНЕТІ ---
+with tab_teacher:
     st.subheader("👩‍🏫 Мұғалімнің басқару панелі")
     
-    selected_class = st.sidebar.selectbox("Сыныпты таңдаңыз:", list(st.session_state.school_data.keys()))
+    # Басты беттегі сыныптарды таңдау батырмалары
+    st.write("**📌 Сыныпты таңдаңыз:**")
+    selected_class = st.radio(
+        "Сыныптар:",
+        list(st.session_state.school_data.keys()),
+        horizontal=True,
+        label_visibility="collapsed"
+    )
+    
+    st.divider()
     
     col1, col2 = st.columns([1, 2])
     
     with col1:
-        st.markdown(f"**📌 {selected_class} тақырыптары:**")
+        st.markdown(f"**📚 {selected_class} тақырыптары:**")
         topics = st.session_state.school_data[selected_class]
         topic_titles = [t["title"] for t in topics]
         selected_topic_title = st.selectbox("Тақырыпты таңдаңыз:", topic_titles)
@@ -189,12 +187,21 @@ if mode == "👩‍🏫 Мұғалім кабинеті":
     else:
         st.info("Әзірге ешқандай нәтиже тіркелмеді.")
 
-else:
+# --- 👨‍🎓 ОҚУШЫ РЕЖИМІ ---
+with tab_student:
     st.subheader("👨‍🎓 Оқушы режимі")
     
-    st_class = st.selectbox("Сыныбыңызды таңдаңыз:", list(st.session_state.school_data.keys()))
+    st.write("**📌 Сыныбыңызды таңдаңыз:**")
+    st_class = st.radio(
+        "Оқушы сыныбы:",
+        list(st.session_state.school_data.keys()),
+        horizontal=True,
+        key="student_class_radio",
+        label_visibility="collapsed"
+    )
+    
     topics = st.session_state.school_data[st_class]
-    st_topic_title = st.selectbox("Тақырыпты таңдаңыз:", [t["title"] for t in topics])
+    st_topic_title = st.selectbox("Тақырыпты таңдаңыз:", [t["title"] for t in topics], key="student_topic_select")
     current_topic = next(t for t in topics if t["title"] == st_topic_title)
     
     st.markdown("---")
