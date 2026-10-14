@@ -4,7 +4,7 @@ from datetime import datetime
 
 # Беттің баптаулары
 st.set_page_config(
-    page_title="Ұстазментор - Функционалдық сауаттылық платформасы",
+    page_title="UstazMentor - Функционалдық сауаттылық платформасы",
     page_icon="🎓",
     layout="wide",
     initial_sidebar_state="collapsed"
@@ -107,13 +107,13 @@ if "submissions" not in st.session_state:
 if "app_mode" not in st.session_state:
     st.session_state.app_mode = "Мұғалім кабинеті"
 
-# 🌟 ҰСТАЗМЕНТОР АТАУЫ МЕН ЖОҒАРҒЫ ШАПКА
+# 🌟 USTAZMENTOR АТАУЫ МЕН ЖОҒАРҒЫ ШАПКА
 st.markdown("""
 <div class="custom-header">
     <table style="width: 100%; border: none; background: transparent;">
         <tr style="background: transparent;">
             <td style="border: none; background: transparent;">
-                <span style="font-size: 2.2rem; font-weight: 900; color: #ffffff;">🎓 ҰСТАЗМЕНТОР</span><br>
+                <span style="font-size: 2.2rem; font-weight: 900; color: #ffffff;">🎓 UstazMentor</span><br>
                 <span style="font-size: 1.05rem; font-weight: 700; color: #e0e7ff;">Бір тақырып — бір өмірлік жағдаят — үш деңгей — нақты нәтиже!</span>
             </td>
         </tr>
