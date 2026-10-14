@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 from datetime import datetime
 
-# Беттің баптаулары (Бүйірлік панельді жауып қою)
+# Беттің баптаулары
 st.set_page_config(
     page_title="UstazMentor - Цифрлық платформа",
     page_icon="🎓",
@@ -10,54 +10,61 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# 🌟 КАСТОМДЫ CSS СТИЛЬДЕР (Бүйірлік панельсіз, басты беттегі батырмалар дизайны)
+# 🌟 КАСОМДЫҚ КӨК СТИЛЬДЕР ЖӘНЕ ТАЙМЕР ДИЗАЙНЫ
 st.markdown("""
 <style>
-    /* Бүйірлік панельді толығымен жасыру */
     [data-testid="stSidebar"] {
         display: none;
     }
-    
-    /* Негізгі фон */
     .stApp {
         background-color: #f8fafc;
         font-family: 'Inter', sans-serif;
     }
-    
-    /* Басты шапка карточкасы */
     .header-card {
-        background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+        background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
         color: white;
         padding: 2.2rem;
         border-radius: 20px;
-        box-shadow: 0 10px 25px -5px rgba(59, 130, 246, 0.3);
+        box-shadow: 0 10px 25px -5px rgba(37, 99, 235, 0.3);
         margin-bottom: 1.5rem;
         text-align: center;
     }
-    
     .header-title {
         font-size: 2.5rem !important;
         font-weight: 800;
         margin-bottom: 0.5rem;
+        color: #ffffff;
     }
-    
     .header-subtitle {
         font-size: 1.1rem;
-        opacity: 0.9;
+        opacity: 0.95;
+        color: #e0e7ff;
     }
-
-    /* Контекст блогы (Өмірлік жағдаят) */
+    /* Көк түсті тақырыптар мен жазулар */
+    h1, h2, h3, h4, .blue-text {
+        color: #1e40af !important;
+        font-weight: 700 !important;
+    }
     .context-box {
         background-color: #eff6ff;
-        border-left: 5px solid #3b82f6;
+        border-left: 5px solid #2563eb;
         padding: 1.2rem;
         border-radius: 12px;
-        color: #1e40af;
+        color: #1e3a8a;
         font-size: 1.05rem;
         margin-bottom: 1rem;
     }
-    
-    /* Батырмаларды сәндеу */
+    .timer-box {
+        background: #dbeafe;
+        color: #1e40af;
+        padding: 0.8rem 1.2rem;
+        border-radius: 10px;
+        font-weight: bold;
+        font-size: 1.1rem;
+        text-align: center;
+        margin-bottom: 1rem;
+        border: 1px solid #bfdbfe;
+    }
     .stButton>button {
         border-radius: 12px !important;
         font-weight: 600 !important;
@@ -89,7 +96,7 @@ if "school_data" not in st.session_state:
 if "submissions" not in st.session_state:
     st.session_state.submissions = []
 
-# 🌟 1. КӨК БАННЕР (Хедер)
+# Хедер баннері
 st.markdown("""
 <div class="header-card">
     <div class="header-title">🎓 UstazMentor</div>
@@ -97,20 +104,20 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-# 🌟 2. БАСТЫ БЕТТЕГІ РЕЖИМДІ ТАҢДАУ ТҮЙМЕЛЕРІ (Вкладкалар)
+# Негізгі вкладкалар
 tab_teacher, tab_student = st.tabs(["👩‍🏫 Мұғалім кабинеті", "👨‍🎓 Оқушы режимі"])
 
 # --- 👩‍🏫 МҰҒАЛІМ КАБИНЕТІ ---
 with tab_teacher:
-    st.subheader("👩‍🏫 Мұғалімнің басқару панелі")
+    st.markdown("### 👩‍🏫 Мұғалімнің басқару панелі")
     
-    # Басты беттегі сыныптарды таңдау батырмалары
-    st.write("**📌 Сыныпты таңдаңыз:**")
+    st.markdown("**📌 Сыныпты таңдаңыз:**")
     selected_class = st.radio(
         "Сыныптар:",
         list(st.session_state.school_data.keys()),
         horizontal=True,
-        label_visibility="collapsed"
+        label_visibility="collapsed",
+        key="teacher_class_radio"
     )
     
     st.divider()
@@ -166,7 +173,7 @@ with tab_teacher:
         st.code(f"https://ustaz-mentor.streamlit.app/?class={selected_class}&topic={current_topic['id']}")
 
     st.divider()
-    st.markdown("### 📊 Оқушылардың нәтижелері")
+    st.markdown("### 📊 Оқушылардың нәтижелері мен есеп беру")
     
     if st.session_state.submissions:
         df = pd.DataFrame(st.session_state.submissions)
@@ -175,13 +182,26 @@ with tab_teacher:
         if not filtered_df.empty:
             st.dataframe(filtered_df, use_container_width=True)
             
-            csv = filtered_df.to_csv(index=False).encode('utf-8')
-            st.download_button(
-                label="📥 Нәтижелерді Excel (CSV) форматында жүктеу",
-                data=csv,
-                file_name=f"UstazMentor_Netijeler_{selected_class}.csv",
-                mime="text/csv",
-            )
+            col_btn1, col_btn2 = st.columns(2)
+            with col_btn1:
+                csv = filtered_df.to_csv(index=False).encode('utf-8')
+                st.download_button(
+                    label="📥 Excel (CSV) форматында жүктеу",
+                    data=csv,
+                    file_name=f"UstazMentor_Netijeler_{selected_class}.csv",
+                    mime="text/csv",
+                    use_container_width=True
+                )
+            with col_btn2:
+                # Буферге көшіру үшін мәтіндік формат жасау
+                tsv_data = filtered_df.to_csv(sep='\t', index=False)
+                st.download_button(
+                    label="📋 Деректерді буферге көшіру (TSV формат)",
+                    data=tsv_data,
+                    file_name=f"Copy_Data_{selected_class}.txt",
+                    mime="text/plain",
+                    use_container_width=True
+                )
         else:
             st.info("Бұл сыныпта әзірге нәтижелер жоқ.")
     else:
@@ -189,17 +209,23 @@ with tab_teacher:
 
 # --- 👨‍🎓 ОҚУШЫ РЕЖИМІ ---
 with tab_student:
-    st.subheader("👨‍🎓 Оқушы режимі")
+    st.markdown("### 👨‍🎓 Оқушы режимі")
     
-    st.write("**📌 Сыныбыңызды таңдаңыз:**")
-    st_class = st.radio(
-        "Оқушы сыныбы:",
-        list(st.session_state.school_data.keys()),
-        horizontal=True,
-        key="student_class_radio",
-        label_visibility="collapsed"
-    )
-    
+    col_t1, col_t2 = st.columns([3, 1])
+    with col_t1:
+        st.markdown("**📌 Сыныбыңызды таңдаңыз:**")
+        st_class = st.radio(
+            "Оқушы сыныбы:",
+            list(st.session_state.school_data.keys()),
+            horizontal=True,
+            key="student_class_radio",
+            label_visibility="collapsed"
+        )
+    with col_t2:
+        # ⏱ ТАЙМЕР БАПТАУЫ (15-20 минут)
+        timer_mins = st.selectbox("⏱ Таймер уақыты:", [15, 20, 10, 5], index=0)
+        st.markdown(f'<div class="timer-box">⏳ Тапсырма уақыты: {timer_mins} минут</div>', unsafe_allow_html=True)
+
     topics = st.session_state.school_data[st_class]
     st_topic_title = st.selectbox("Тақырыпты таңдаңыз:", [t["title"] for t in topics], key="student_topic_select")
     current_topic = next(t for t in topics if t["title"] == st_topic_title)
