@@ -10,42 +10,38 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# 🌟 СУРЕТТЕГІДЕЙ ЗАМАНАУИ ДИЗАЙН ИНТЕРФЕЙСІ ЖӘНЕ СТИЛЬДЕР
+# 🌟 ЖОҒАРҒЫ ШАПКАНЫ КӨК ЕТІП БОЯЙТЫН ЖӘНЕ ДИЗАЙНДЫ РЕТТЕЙТІН CSS
 st.markdown("""
 <style>
     [data-testid="stSidebar"] {
         display: none;
     }
+    /* Streamlit-тің әдепкі жоғарғы бос аймағын көк градиентке бояу */
+    [data-testid="stHeader"] {
+        background: linear-gradient(135deg, #4f46e5 0%, #3b82f6 100%) !important;
+    }
     .stApp {
         background-color: #f8fafc;
         font-family: 'Inter', sans-serif;
     }
-    /* Жоғарғы фиолетті-көк шапка карточкасы */
-    .header-card {
+    /* Жоғарғы шапка баннері */
+    .custom-header {
         background: linear-gradient(135deg, #4f46e5 0%, #3b82f6 100%);
         color: white;
-        padding: 2rem 2.5rem;
-        border-radius: 0 0 24px 24px;
-        box-shadow: 0 10px 25px -5px rgba(59, 130, 246, 0.3);
+        padding: 1.5rem 2rem;
+        border-radius: 0 0 20px 20px;
+        box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+        margin-top: -60px;
+        margin-left: -4rem;
+        margin-right: -4rem;
         margin-bottom: 2rem;
-    }
-    .header-title {
-        font-size: 2.2rem !important;
-        font-weight: 800;
-        margin-bottom: 0.2rem;
-        color: #ffffff;
-    }
-    .header-subtitle {
-        font-size: 1rem;
-        opacity: 0.9;
-        color: #e0e7ff;
     }
     /* Негізгі үлкен ақ карточка контейнері */
     .main-container {
         background: #ffffff;
         padding: 2.5rem;
         border-radius: 20px;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
         border: 1px solid #e2e8f0;
         margin-bottom: 2rem;
     }
@@ -105,28 +101,32 @@ if "submissions" not in st.session_state:
 if "app_mode" not in st.session_state:
     st.session_state.app_mode = "Мұғалім кабинеті"
 
-# Жоғарғы шапка және режимді ауыстыру батырмалары
-col_h1, col_h2 = st.columns([2, 1])
-with col_h1:
-    st.markdown("""
-    <div style="padding: 1rem 0;">
-        <span style="font-size: 2rem; font-weight: 800; color: #ffffff;">🎓 USTAZAI</span><br>
-        <span style="font-size: 0.95rem; color: #e0e7ff;">Бір тақырып — бір өмірлік жағдаят — үш деңгей — нақты нәтиже!</span>
-    </div>
-    """, unsafe_allow_html=True)
-with col_h2:
-    st.markdown("<div style='height: 15px;'></div>", unsafe_allow_html=True)
-    col_b1, col_b2 = st.columns(2)
-    with col_b1:
-        if st.button("Оқушы режимі", use_container_width=True):
-            st.session_state.app_mode = "Оқушы режимі"
-            st.rerun()
-    with col_b2:
-        if st.button("Мұғалім кабинеті", use_container_width=True, type="primary"):
-            st.session_state.app_mode = "Мұғалім кабинеті"
-            st.rerun()
+# 🌟 ЖОҒАРҒЫ КӨК ШАПКА БАННЕРІ ЖӘНЕ БАТЫРМАЛАР
+st.markdown("""
+<div class="custom-header">
+    <table style="width: 100%; border: none; background: transparent;">
+        <tr style="background: transparent;">
+            <td style="border: none; background: transparent;">
+                <span style="font-size: 2.2rem; font-weight: 800; color: #ffffff;">🎓 USTAZAI</span><br>
+                <span style="font-size: 0.95rem; color: #e0e7ff;">Бір тақырып — бір өмірлік жағдаят — үш деңгей — нақты нәтиже!</span>
+            </td>
+        </tr>
+    </table>
+</div>
+""", unsafe_allow_html=True)
 
-st.markdown("<hr style='margin: 0px 0px 20px 0px; border-color: #3b82f6;'>", unsafe_allow_html=True)
+# Режим ауыстыру батырмалары
+col_btn1, col_btn2, col_space = st.columns([1, 1, 2])
+with col_btn1:
+    if st.button("👨‍🎓 Оқушы режимі", use_container_width=True):
+        st.session_state.app_mode = "Оқушы режимі"
+        st.rerun()
+with col_btn2:
+    if st.button("👩‍🏫 Мұғалім кабинеті", use_container_width=True, type="primary"):
+        st.session_state.app_mode = "Мұғалім кабинеті"
+        st.rerun()
+
+st.markdown("<br>", unsafe_allow_html=True)
 
 # ================= МҰҒАЛІМ КАБИНЕТІ =================
 if st.session_state.app_mode == "Мұғалім кабинеті":
@@ -191,7 +191,6 @@ if st.session_state.app_mode == "Мұғалім кабинеті":
         </div>
         """, unsafe_allow_html=True)
         
-        # Баптаулар контейнері
         opt_col1, opt_col2 = st.columns(2)
         with opt_col1:
             save_mode = st.checkbox("💾 Нәтижені сақтау:", value=True)
@@ -277,7 +276,7 @@ else:
             now_time = datetime.now().strftime("%H:%M:%S")
             
             st.session_state.submissions.append({
-                "Оқушы аты-жөні": student_name,
+                "Оқушы аты-жөніңіз": student_name,
                 "Сыныбы": student_class_full,
                 "Тақырып": current_topic["title"],
                 "Жинаған ұпайы": f"{score} / 10",
@@ -286,7 +285,6 @@ else:
             
             st.success(f"Рақмет, {student_name}! Жинаған ұпайыңыз: **{score} / 10 балл**.")
             
-            # Оқушыға арналған кері байланыс
             st.markdown(f"""
             <div class="feedback-box">
                 <b>💡 Мұғалімнің кері байланысы мен түсініктемесі:</b><br>
@@ -295,4 +293,3 @@ else:
             """, unsafe_allow_html=True)
 
     st.markdown("</div>", unsafe_allow_html=True)
-       
