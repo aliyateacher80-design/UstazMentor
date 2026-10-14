@@ -4,19 +4,18 @@ from datetime import datetime
 
 # Беттің баптаулары
 st.set_page_config(
-    page_title="USTAZAI - Функционалдық сауаттылық платформасы",
+    page_title="Ұстазментор - Функционалдық сауаттылық платформасы",
     page_icon="🎓",
     layout="wide",
     initial_sidebar_state="collapsed"
 )
 
-# 🌟 ЖОҒАРҒЫ ШАПКАНЫ КӨК ЕТІП БОЯЙТЫН ЖӘНЕ ДИЗАЙНДЫ РЕТТЕЙТІН CSS
+# 🌟 ЖАЗУЛАРДЫ ҚАЛЫҢДАТУ ЖӘНЕ ДИЗАЙНДЫ ЖАҚСАРТУҒА АРНАЛҒАН CSS
 st.markdown("""
 <style>
     [data-testid="stSidebar"] {
         display: none;
     }
-    /* Streamlit-тің әдепкі жоғарғы бос аймағын көк градиентке бояу */
     [data-testid="stHeader"] {
         background: linear-gradient(135deg, #4f46e5 0%, #3b82f6 100%) !important;
     }
@@ -36,6 +35,11 @@ st.markdown("""
         margin-right: -4rem;
         margin-bottom: 2rem;
     }
+    /* Барлық мәтіндер мен атауларды қалыңдату және үлкейту */
+    body, p, span, label, div {
+        font-weight: 600 !important;
+        color: #1e293b;
+    }
     /* Негізгі үлкен ақ карточка контейнері */
     .main-container {
         background: #ffffff;
@@ -45,31 +49,33 @@ st.markdown("""
         border: 1px solid #e2e8f0;
         margin-bottom: 2rem;
     }
-    h1, h2, h3, h4 {
+    h1, h2, h3, h4, h5 {
         color: #1e293b !important;
-        font-weight: 700 !important;
+        font-weight: 800 !important;
     }
     .context-box {
-        background-color: #f8fafc;
-        border: 1px solid #e2e8f0;
+        background-color: #f1f5f9;
+        border: 1px solid #cbd5e1;
         padding: 1.2rem;
         border-radius: 12px;
-        color: #334155;
-        font-size: 1.05rem;
+        color: #0f172a;
+        font-size: 1.1rem;
+        font-weight: 700 !important;
         margin-bottom: 1rem;
     }
     .feedback-box {
         background-color: #f0fdf4;
-        border-left: 5px solid #22c55e;
+        border-left: 6px solid #22c55e;
         padding: 1.2rem;
         border-radius: 12px;
         color: #166534;
-        font-size: 1.05rem;
+        font-size: 1.1rem;
+        font-weight: 700 !important;
         margin-top: 1rem;
     }
     .stButton>button {
         border-radius: 10px !important;
-        font-weight: 600 !important;
+        font-weight: 700 !important;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -101,14 +107,14 @@ if "submissions" not in st.session_state:
 if "app_mode" not in st.session_state:
     st.session_state.app_mode = "Мұғалім кабинеті"
 
-# 🌟 ЖОҒАРҒЫ КӨК ШАПКА БАННЕРІ ЖӘНЕ БАТЫРМАЛАР
+# 🌟 ҰСТАЗМЕНТОР АТАУЫ МЕН ЖОҒАРҒЫ ШАПКА
 st.markdown("""
 <div class="custom-header">
     <table style="width: 100%; border: none; background: transparent;">
         <tr style="background: transparent;">
             <td style="border: none; background: transparent;">
-                <span style="font-size: 2.2rem; font-weight: 800; color: #ffffff;">🎓 USTAZAI</span><br>
-                <span style="font-size: 0.95rem; color: #e0e7ff;">Бір тақырып — бір өмірлік жағдаят — үш деңгей — нақты нәтиже!</span>
+                <span style="font-size: 2.2rem; font-weight: 900; color: #ffffff;">🎓 ҰСТАЗМЕНТОР</span><br>
+                <span style="font-size: 1.05rem; font-weight: 700; color: #e0e7ff;">Бір тақырып — бір өмірлік жағдаят — үш деңгей — нақты нәтиже!</span>
             </td>
         </tr>
     </table>
@@ -183,7 +189,7 @@ if st.session_state.app_mode == "Мұғалім кабинеті":
                     st.rerun()
 
     with col2:
-        st.markdown(f"#### {current_topic['title']}")
+        st.markdown(f"<h4>{current_topic['title']}</h4>", unsafe_allow_html=True)
         
         st.markdown(f"""
         <div class="context-box">
@@ -200,7 +206,7 @@ if st.session_state.app_mode == "Мұғалім кабинеті":
         st.markdown("**🔗 САБАҚ СІЛТЕМЕСІН АВТОМАТТЫ ЖАСАУ**")
         link_col1, link_col2 = st.columns([4, 1])
         with link_col1:
-            share_link = f"https://ustazai.streamlit.app/?class={selected_class}&topic={current_topic['id']}&timer={set_timer_mins}"
+            share_link = f"https://ustaz-mentor.streamlit.app/?class={selected_class}&topic={current_topic['id']}&timer={set_timer_mins}"
             st.code(share_link, language="")
         with link_col2:
             st.markdown("<div style='height: 28px;'></div>", unsafe_allow_html=True)
@@ -208,7 +214,7 @@ if st.session_state.app_mode == "Мұғалім кабинеті":
                 st.toast("Сілтеме буферге көшірілді!")
 
     st.markdown("<hr style='margin: 25px 0px;'>", unsafe_allow_html=True)
-    st.markdown("#### 📊 Оқушылардың нәтижелері")
+    st.markdown("<h4>📊 Оқушылардың нәтижелері</h4>", unsafe_allow_html=True)
     
     if st.session_state.submissions:
         df = pd.DataFrame(st.session_state.submissions)
@@ -221,7 +227,7 @@ if st.session_state.app_mode == "Мұғалім кабинеті":
             st.download_button(
                 label="📥 Excel-ге жүктеу (CSV)",
                 data=csv,
-                file_name=f"UstazAI_Netijeler_{selected_class}.csv",
+                file_name=f"UstazMentor_Netijeler_{selected_class}.csv",
                 mime="text/csv",
             )
         else:
@@ -263,7 +269,7 @@ else:
     </div>
     """, unsafe_allow_html=True)
     
-    st.markdown("#### 📝 Тапсырмалар:")
+    st.markdown("<h4>📝 Тапсырмалар:</h4>", unsafe_allow_html=True)
     ans_a = st.text_input(f"🟢 A деңгейі (2 балл): {current_topic['a']}")
     ans_b = st.text_input(f"🟡 B деңгейі (3 балл): {current_topic['b']}")
     ans_c = st.text_area(f"🔴 C деңгейі (5 балл): {current_topic['c']}")
@@ -276,7 +282,7 @@ else:
             now_time = datetime.now().strftime("%H:%M:%S")
             
             st.session_state.submissions.append({
-                "Оқушы аты-жөніңіз": student_name,
+                "Оқушы аты-жөні": student_name,
                 "Сыныбы": student_class_full,
                 "Тақырып": current_topic["title"],
                 "Жинаған ұпайы": f"{score} / 10",
