@@ -58,7 +58,7 @@ st.divider()
 if role == "👩‍🏫 Мұғалім кабинеті":
     st.subheader("👨‍💻 Мұғалімнің басқару және баптау панелі 🔗")
     
-    save_results_enabled = st.toggle("📊 Оқушы нәтижелерін базаға сақтау", value=True, help="Қосулы тұрса, оқушылардың тапсырма нәтижелері тіркеледі.")
+    save_results_enabled = st.toggle("📊 Оқушы нәтижелерін базаға сақтау", value=True, help="Қосулы тұрса, оқушылардың аты-жөні мен нәтижелері тіркеледі.")
     
     selected_section = st.selectbox("Бөлімді таңдаңыз:", list(sections_dict.keys()))
     selected_topic = st.selectbox("Тақырыпты таңдаңыз:", sections_dict[selected_section])
@@ -74,10 +74,17 @@ if role == "👩‍🏫 Мұғалім кабинеті":
     if save_results_enabled:
         st.divider()
         st.subheader("📊 Сақталған оқушы нәтижелері")
-        st.write("Әзірге бұл тақырып бойынша сақталған нәтижелер тізімі бос.")
+        st.write("Әзірге бұл тақырып бойынша сақталған нәтижелер тізімі (Оқушы аты-жөні, сыныбы, ұпайы) осында көрініп тұрады.")
 
 else:
     st.subheader("👨‍🎓 Оқушы кабинеті")
+    
+    # Оқушының өзін таныстыру блогы
+    col_name, col_class = st.columns([2, 1])
+    with col_name:
+        student_name = st.text_input("Аты-жөніңізді енгізіңіз (Мысалы: Ерболат А.):", placeholder="Аты-жөніңіз...")
+    with col_class:
+        student_grade = st.selectbox("Сыныбыңыз:", ["5 «Ә»", "5 «А»", "5 «Б»", "5 «В»"])
     
     query_params = st.query_params
     default_topic = query_params.get("topic", all_topics[0])
@@ -173,13 +180,17 @@ else:
                     st.radio("9. Салынған растрлық кескінді кейін компьютерге сақтау үшін қандай кеңейтілімдер жиі қолданылады?", ["А) .png немесе .jpg", "Б) .py немесе .txt", "В) .mp3 немесе .mp4"])
                     st.radio("10. Растрлық кескіндерді құру кезінде дәлдікті сақтау үшін экранды не істеуге болады?", ["А) Масштабты (Zoom) үлкейтіп, пиксельдерді жақыннан көру", "Б) Мониторды өшіру", "В) Суретті кішірейту"])
 
-                if st.form_submit_button("Тестті тексеру (10 ұпай)"):
-                    st.balloons()
-                    st.success("Тест сәтті аяқталды! Барлық жауаптар тексерілді 🌟")
-                    if save_mode:
-                        st.info("💾 Нәтиже мұғалім базасына сақталды.")
+                submit_test = st.form_submit_button("Тестті тексеру және нәтижені жіберу (10 ұпай)")
+                if submit_test:
+                    if not student_name.strip():
+                        st.error("⚠️ Назар аударыңыз! Тапсырманы орындау үшін ең алдымен аты-жөніңізді жазыңыз.")
                     else:
-                        st.warning("⚠️ Нәтиже сақтау өшірулі.")
+                        st.balloons()
+                        st.success(f"Құттықтаймыз, {student_name} ({student_grade})! Тест сәтті аяқталды! 🌟")
+                        if save_mode:
+                            st.info(f"💾 {student_name} нәтижесі мұғалім базасына сәтті сақталды.")
+                        else:
+                            st.warning("⚠️ Нәтиже сақтау өшірулі.")
                 
     with tab_match:
         st.markdown(f"#### Сәйкестендіру тапсырмасы: {selected_topic}")
@@ -250,13 +261,17 @@ else:
                 for item in match_items:
                     st.text_input(f"{item} сәйкестігі:", key=f"m_input_{item}")
 
-                if st.form_submit_button("Сәйкестікті тексеру (10 ұпай)"):
-                    st.balloons()
-                    st.success("Барлық сәйкестіктер тексерілді! 10 ұпай 🎯")
-                    if save_mode:
-                        st.info("💾 Сәйкестендіру нәтижесі сақталды.")
+                submit_match = st.form_submit_button("Сәйкестікті тексеру және жіберу (10 ұпай)")
+                if submit_match:
+                    if not student_name.strip():
+                        st.error("⚠️ Аты-жөніңізді жоғарғы жаққа жазыңыз!")
                     else:
-                        st.warning("⚠️ Нәтиже сақтау өшірулі.")
+                        st.balloons()
+                        st.success(f"Жарайсың, {student_name}! Барлық сәйкестіктер тексерілді! 🎯")
+                        if save_mode:
+                            st.info(f"💾 {student_name} ({student_grade}) сәйкестендіру нәтижесі сақталды.")
+                        else:
+                            st.warning("⚠️ Нәтиже сақтау өшірулі.")
                 
     with tab_game:
         st.markdown(f"#### Прагматикалық тренажер / Интерактивті қадамдар (10 қадам): {selected_topic}")
@@ -267,11 +282,13 @@ else:
             st.info(f"📍 **{selected_topic}** бойынша **{step}-қадам** орындалуда. Тапсырманы орындап, келесі қадамға өтіңіз.")
 
         if st.button("Қадамды растау / Нәтиже тіркеу", key=f"btn_{selected_topic}"):
-            if step == 10:
+            if not student_name.strip():
+                st.error("⚠️ Ең алдымен аты-жөніңізді жазыңыз!")
+            elif step == 10:
                 st.balloons()
-                st.success("Құттықтаймыз! Барлық 10 қадам сәтті аяқталып, прагматикалық дағды бекітілді! 🚀")
+                st.success(f"Құттықтаймыз, {student_name}! Барлық 10 қадам сәтті аяқталды! 🚀")
                 if save_mode:
-                    st.info("💾 Тренажер нәтижесі мұғалім базасына сақталды.")
+                    st.info(f"💾 {student_name} ({student_grade}) тренажер нәтижесі мұғалім базасына сақталды.")
             else:
                 st.warning("Жүгірткіні 10-ға жеткізіп, барлық 10 қадамды толық аяқтаңыз!")
 
