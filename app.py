@@ -1,301 +1,110 @@
 import streamlit as st
-import pandas as pd
-from datetime import datetime
+import json
+import os
 
 # Беттің баптаулары
 st.set_page_config(
     page_title="UstazMentor - Функционалдық сауаттылық платформасы",
     page_icon="🎓",
     layout="wide",
-    initial_sidebar_state="collapsed"
+    initial_sidebar_state="expanded"
 )
 
-# 🌟 ЖАЗУЛАРДЫ ҚАЛЫҢДАТУ ЖӘНЕ ДИЗАЙНДЫ ЖАҚСАРТУҒА АРНАЛҒАН CSS
+# Стильдерді беру
 st.markdown("""
 <style>
-    [data-testid="stSidebar"] {
-        display: none;
-    }
-    [data-testid="stHeader"] {
-        background: linear-gradient(135deg, #4f46e5 0%, #3b82f6 100%) !important;
-    }
-    .stApp {
+    .main {
         background-color: #f8fafc;
         font-family: 'Inter', sans-serif;
     }
-    /* Жоғарғы шапка баннері */
-    .custom-header {
-        background: linear-gradient(135deg, #4f46e5 0%, #3b82f6 100%);
-        color: white;
-        padding: 1.5rem 2rem;
-        border-radius: 0 0 20px 20px;
-        box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
-        margin-top: -60px;
-        margin-left: -4rem;
-        margin-right: -4rem;
-        margin-bottom: 2rem;
-    }
-    /* Барлық мәтіндер мен атауларды қалыңдату және үлкейту */
-    body, p, span, label, div {
-        font-weight: 600 !important;
-        color: #1e293b;
-    }
-    /* Негізгі үлкен ақ карточка контейнері */
-    .main-container {
-        background: #ffffff;
-        padding: 2.5rem;
-        border-radius: 20px;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-        border: 1px solid #e2e8f0;
-        margin-bottom: 2rem;
-    }
-    h1, h2, h3, h4, h5 {
-        color: #1e293b !important;
-        font-weight: 800 !important;
-    }
-    .context-box {
-        background-color: #f1f5f9;
-        border: 1px solid #cbd5e1;
-        padding: 1.2rem;
-        border-radius: 12px;
-        color: #0f172a;
-        font-size: 1.1rem;
-        font-weight: 700 !important;
-        margin-bottom: 1rem;
-    }
-    .feedback-box {
-        background-color: #f0fdf4;
-        border-left: 6px solid #22c55e;
-        padding: 1.2rem;
-        border-radius: 12px;
-        color: #166534;
-        font-size: 1.1rem;
-        font-weight: 700 !important;
-        margin-top: 1rem;
-    }
     .stButton>button {
-        border-radius: 10px !important;
-        font-weight: 700 !important;
+        background-color: #2563eb;
+        color: white;
+        border-radius: 8px;
+        padding: 0.5rem 1rem;
+        font-weight: 600;
+    }
+    .stButton>button:hover {
+        background-color: #1d4ed8;
     }
 </style>
 """, unsafe_allow_html=True)
 
-# Session state деректері
-if "school_data" not in st.session_state:
-    st.session_state.school_data = {
-        "5-сынып": [
-            {"id": 1, "title": "1. Компьютер және қауіпсіздік", "context": "Кабинеттегі қауіпсіздік ережелері мен дұрыс отыру тәртібі.", "a": "Компьютерді дұрыс қосу тәртібін жазыңыз.", "b": "Қате мен дұрыс отыру жағдайын салыстырыңыз.", "c": "Қауіпсіздік ережесін сақтау бойынша шағын жоспар құрыңыз.", "feedback": "Керемет! Компьютер кабинетіндегі қауіпсіздік ережелерін сақтау денсаулық үшін өте маңызды."},
-            {"id": 2, "title": "2. Ақпарат ұғымы", "context": "Өмірдегі ақпарат түрлерін қабылдау мен тарату әдістері.", "a": "Ақпарат көздерін атап көрсетіңіз.", "b": "Ақпаратты қабылдау түрлеріне қарай жіктеңіз.", "c": "Күнделікті өмірдегі ақпараттық қауіпсіздікті дәлелдеңіз.", "feedback": "Жақсы! Ақпаратты қабылдау және өңдеу адам өміріндегі шешім қабылдауға тікелей әсер етеді."}
-        ],
-        "6-сынып": [
-            {"id": 1, "title": "1. Электрондық кестелер", "context": "Мектеп асханасының бір апталық өнім шығынын есептеу.", "a": "Ұяшық адресін дұрыс көрсетіңіз.", "b": "Екі дүкен бағасын формула арқылы салыстырыңыз.", "c": "Тиімді бюджет жоспарын ұсынып, дәлелдеңіз.", "feedback": "Талдауыңыз дұрыс! Электрондық кестелер қаржыны үнемдеуге және есеп айырысуға көмектеседі."}
-        ],
-        "7-сынып": [
-            {"id": 1, "title": "1. Python тіліне кіріспе", "context": "Мектеп жарысының нәтижелерін есептейтін шағын скрипт.", "a": "Айнымалы мәнін дұрыс жазыңыз.", "b": "Шартты оператор жұмысын талдаңыз.", "c": "Берілген есепті шығаратын код құрыңыз.", "feedback": "Өте жақсы! Бағдарламалау логикасы күнделікті өмірдегі алгоритмдерді автоматтандырады."}
-        ],
-        "8-сынып": [
-            {"id": 1, "title": "1. Компьютерлік желілер", "context": "Мектеп кабинеттерін жергілікті желіге қосу.", "a": "Желі жабдықтарын атаңыз.", "b": "Wi-Fi мен сымды интернетті салыстырыңыз.", "c": "Желілік топология жобасын ұсыныңыз.", "feedback": "Керемет! Желі қауіпсіздігі мен жылдамдығы дұрыс конфигурацияға тікелей байланысты."}
-        ],
-        "9-сынып": [
-            {"id": 1, "title": "1. Жасанды интеллект негіздері", "context": "Суреттерді танитын қарапайым нейрожелі.", "a": "Оқыту деректерін таңдау.", "b": "Қателік функциясын (MSE) талдаңыз.", "c": "ЖИ көмегімен мәселені шешу жобасын ұсыныңыз.", "feedback": "Тамаша! Жасанды интеллект модельдері заманауи өмірлік мәселелерді шешуде үлкен рөл атқарады."}
-        ]
-    }
+# tasks.json файлынан тапсырмаларды жүктеу функциясы
+@st.cache_data
+def load_tasks():
+    if os.path.exists("tasks.json"):
+        with open("tasks.json", "r", encoding="utf-8") as f:
+            return json.load(f)
+    return {}
 
-if "submissions" not in st.session_state:
-    st.session_state.submissions = []
+tasks_data = load_tasks()
 
-if "app_mode" not in st.session_state:
-    st.session_state.app_mode = "Мұғалім кабинеті"
+# Басты бет интерфейсі
+st.title("🎓 UstazMentor — Информатика мұғаліміне арналған платформа")
+st.markdown("---")
 
-# 🌟 USTAZMENTOR АТАУЫ МЕН ЖОҒАРҒЫ ШАПКА
-st.markdown("""
-<div class="custom-header">
-    <table style="width: 100%; border: none; background: transparent;">
-        <tr style="background: transparent;">
-            <td style="border: none; background: transparent;">
-                <span style="font-size: 2.2rem; font-weight: 900; color: #ffffff;">🎓 UstazMentor</span><br>
-                <span style="font-size: 1.05rem; font-weight: 700; color: #e0e7ff;">Бір тақырып — бір өмірлік жағдаят — үш деңгей — нақты нәтиже!</span>
-            </td>
-        </tr>
-    </table>
-</div>
-""", unsafe_allow_html=True)
+# Бүйірлік панель (Sidebar) сынып таңдау үшін
+st.sidebar.header("📁 Сыныптар мен модульдер")
+grade_option = st.sidebar.selectbox(
+    "Сыныпты таңдаңыз:",
+    ["5-сынып", "6-сынып", "7-сынып", "8-сынып", "9-сынып", "10-сынып", "11-сынып"]
+)
 
-# Режим ауыстыру батырмалары
-col_btn1, col_btn2, col_space = st.columns([1, 1, 2])
-with col_btn1:
-    if st.button("👨‍🎓 Оқушы режимі", use_container_width=True):
-        st.session_state.app_mode = "Оқушы режимі"
-        st.rerun()
-with col_btn2:
-    if st.button("👩‍🏫 Мұғалім кабинеті", use_container_width=True, type="primary"):
-        st.session_state.app_mode = "Мұғалім кабинеті"
-        st.rerun()
-
-st.markdown("<br>", unsafe_allow_html=True)
-
-# ================= МҰҒАЛІМ КАБИНЕТІ =================
-if st.session_state.app_mode == "Мұғалім кабинеті":
-    st.markdown("""
-    <div class="main-container">
-        <h3>👩‍🏫 Мұғалімнің басқару панелі</h3>
-    """, unsafe_allow_html=True)
+if grade_option == "5-сынып":
+    st.subheader("📚 5-сынып: Функционалдық сауаттылық тапсырмалары")
     
-    st.markdown("**Сыныпты таңдаңыз:**")
-    selected_class = st.radio(
-        "Сыныптар:",
-        list(st.session_state.school_data.keys()),
-        horizontal=True,
-        label_visibility="collapsed",
-        key="teacher_class_radio"
-    )
+    grade_5_tasks = tasks_data.get("grade_5", [])
     
-    st.markdown("<hr style='margin: 15px 0px;'>", unsafe_allow_html=True)
-    
-    col1, col2 = st.columns([1, 2], gap="large")
-    
-    with col1:
-        st.markdown(f"**📚 {selected_class} тақырыптары:**")
-        topics = st.session_state.school_data[selected_class]
-        topic_titles = [t["title"] for t in topics]
-        selected_topic_title = st.selectbox("Тақырыпты таңдаңыз:", topic_titles, label_visibility="collapsed")
-        
-        current_topic = next(t for t in topics if t["title"] == selected_topic_title)
-        
-        st.markdown("<br>", unsafe_allow_html=True)
-        with st.expander("➕ Өз тапсырмаңды жасау"):
-            with st.form("custom_form"):
-                c_title = st.text_input("Тақырып атауы:")
-                c_context = st.text_area("Өмірлік жағдаят (Контекст):")
-                c_a = st.text_input("А деңгейі сұрағы:")
-                c_b = st.text_input("В деңгейі сұрағы:")
-                c_c = st.text_input("С деңгейі сұрағы:")
-                c_feedback = st.text_input("Автоматты кері байланыс мәтіні:")
+    if grade_5_tasks:
+        for task in grade_5_tasks:
+            st.markdown(f"### 🔹 Тақырып: {task['topic']}")
+            st.info(f"**Жағдаят/Кейс:** {task['case']}")
+            
+            with st.form(key=f"task_form_{task['id']}"):
+                user_answers = {}
                 
-                submitted = st.form_submit_button("Тақырыпты қосу")
-                if submitted and c_title and c_context:
-                    new_id = len(st.session_state.school_data[selected_class]) + 1
-                    new_t = {
-                        "id": new_id,
-                        "title": f"{new_id}. {c_title}",
-                        "context": c_context,
-                        "a": c_a or "Базалық сұрақ.",
-                        "b": c_b or "Талдау сұрағы.",
-                        "c": c_c or "Мәселені шешу.",
-                        "feedback": c_feedback or "Жарайсыз!"
-                    }
-                    st.session_state.school_data[selected_class].append(new_t)
-                    st.success("Жаңа тақырып сәтті қосылды!")
-                    st.rerun()
-
-    with col2:
-        st.markdown(f"<h4>{current_topic['title']}</h4>", unsafe_allow_html=True)
-        
-        st.markdown(f"""
-        <div class="context-box">
-            <b>Өмірлік жағдаят:</b> {current_topic['context']}
-        </div>
-        """, unsafe_allow_html=True)
-        
-        opt_col1, opt_col2 = st.columns(2)
-        with opt_col1:
-            save_mode = st.checkbox("💾 Нәтижені сақтау:", value=True)
-        with opt_col2:
-            set_timer_mins = st.selectbox("⏱ Таймер уақыты:", [10, 15, 20, 30], index=1, key="set_timer_val")
-        
-        st.markdown("**🔗 САБАҚ СІЛТЕМЕСІН АВТОМАТТЫ ЖАСАУ**")
-        link_col1, link_col2 = st.columns([4, 1])
-        with link_col1:
-            share_link = f"https://ustaz-mentor.streamlit.app/?class={selected_class}&topic={current_topic['id']}&timer={set_timer_mins}"
-            st.code(share_link, language="")
-        with link_col2:
-            st.markdown("<div style='height: 28px;'></div>", unsafe_allow_html=True)
-            if st.button("📋 Көшіру", use_container_width=True):
-                st.toast("Сілтеме буферге көшірілді!")
-
-    st.markdown("<hr style='margin: 25px 0px;'>", unsafe_allow_html=True)
-    st.markdown("<h4>📊 Оқушылардың нәтижелері</h4>", unsafe_allow_html=True)
-    
-    if st.session_state.submissions:
-        df = pd.DataFrame(st.session_state.submissions)
-        filtered_df = df[df["Сыныбы"].str.contains(selected_class[0], na=False)]
-        
-        if not filtered_df.empty:
-            st.dataframe(filtered_df, use_container_width=True)
-            
-            csv = filtered_df.to_csv(index=False).encode('utf-8')
-            st.download_button(
-                label="📥 Excel-ге жүктеу (CSV)",
-                data=csv,
-                file_name=f"UstazMentor_Netijeler_{selected_class}.csv",
-                mime="text/csv",
-            )
-        else:
-            st.info("Бұл сыныпта әзірге нәтижелер жоқ.")
+                for idx, q in enumerate(task['questions']):
+                    st.markdown(f"**{idx+1}. {q['text']}**")
+                    
+                    if q['type'] == 'checkbox':
+                        # Чекбокс арқылы бірнеше жауапты таңдау
+                        user_answers[idx] = []
+                        for opt_idx, opt in enumerate(q['options']):
+                            if st.checkbox(opt, key=f"q_{task['id']}_{idx}_{opt_idx}"):
+                                user_answers[idx].append(opt_idx)
+                                
+                    elif q['type'] == 'radio':
+                        # Радио батырма арқылы бір ғана дұрыс жауапты таңдау
+                        user_answers[idx] = st.radio(
+                            "Нұсқалар:", 
+                            q['options'], 
+                            key=f"q_{task['id']}_{idx}",
+                            label_visibility="collapsed"
+                        )
+                
+                submitted = st.form_submit_button("Жауапты тексеру")
+                
+                if submitted:
+                    score = 0
+                    total = len(task['questions'])
+                    
+                    for idx, q in enumerate(task['questions']):
+                        if q['type'] == 'checkbox':
+                            # Жиынтықтардың сәйкестігін тексеру
+                            if set(user_answers[idx]) == set(q['correct']):
+                                score += 1
+                        elif q['type'] == 'radio':
+                            if user_answers[idx] == q['correct']:
+                                score += 1
+                    
+                    if score == total:
+                        st.success(f"🎉 Керемет! Барлық жауап ДҰРЫС! ({score}/{total})")
+                        st.balloons()
+                    else:
+                        st.warning(f"⚠️ Кейбір жауаптар қате немесе толық емес. Ұпай: {score}/{total}. Қайта көріңіз!")
     else:
-        st.info("Бұл сыныпта әзірге нәтижелер жоқ немесе сақтау режимі өшірулі.")
-
-    st.markdown("</div>", unsafe_allow_html=True)
-
-# ================= ОҚУШЫ РЕЖИМІ =================
+        st.info("Бұл сыныпқа әзірге тапсырмалар қосылған жоқ.")
 else:
-    st.markdown("""
-    <div class="main-container">
-        <h3>👨‍🎓 Оқушы режимі</h3>
-    """, unsafe_allow_html=True)
-    
-    st_class = st.radio(
-        "Оқушы сыныбы:",
-        list(st.session_state.school_data.keys()),
-        horizontal=True,
-        key="student_class_radio"
-    )
-    
-    topics = st.session_state.school_data[st_class]
-    st_topic_title = st.selectbox("Тақырыпты таңдаңыз:", [t["title"] for t in topics], key="student_topic_select")
-    current_topic = next(t for t in topics if t["title"] == st_topic_title)
-    
-    st.markdown("<hr style='margin: 15px 0px;'>", unsafe_allow_html=True)
-    
-    col_name, col_cls = st.columns(2)
-    with col_name:
-        student_name = st.text_input("Аты-жөніңіз:")
-    with col_cls:
-        student_class_full = st.text_input("Сынып літерін көрсетіңіз (мысалы: 8 «Ә»):", value="8 «Ә»")
-        
-    st.markdown(f"""
-    <div class="context-box">
-        <b>📖 Өмірлік жағдаят:</b> {current_topic['context']}
-    </div>
-    """, unsafe_allow_html=True)
-    
-    st.markdown("<h4>📝 Тапсырмалар:</h4>", unsafe_allow_html=True)
-    ans_a = st.text_input(f"🟢 A деңгейі (2 балл): {current_topic['a']}")
-    ans_b = st.text_input(f"🟡 B деңгейі (3 балл): {current_topic['b']}")
-    ans_c = st.text_area(f"🔴 C деңгейі (5 балл): {current_topic['c']}")
-    
-    if st.button("🚀 Жауаптарды жіберу", type="primary"):
-        if not student_name.strip():
-            st.error("Өтінемін, аты-жөніңізді енгізіңіз!")
-        else:
-            score = 10
-            now_time = datetime.now().strftime("%H:%M:%S")
-            
-            st.session_state.submissions.append({
-                "Оқушы аты-жөні": student_name,
-                "Сыныбы": student_class_full,
-                "Тақырып": current_topic["title"],
-                "Жинаған ұпайы": f"{score} / 10",
-                "Уақыты": now_time
-            })
-            
-            st.success(f"Рақмет, {student_name}! Жинаған ұпайыңыз: **{score} / 10 балл**.")
-            
-            st.markdown(f"""
-            <div class="feedback-box">
-                <b>💡 Мұғалімнің кері байланысы мен түсініктемесі:</b><br>
-                {current_topic['feedback']}
-            </div>
-            """, unsafe_allow_html=True)
-
-    st.markdown("</div>", unsafe_allow_html=True)
+    st.subheader(f"📚 {grade_option}")
+    st.info("Бұл сыныптың модульдері мен практикалық тапсырмалары дайындалу үстінде...")
