@@ -2,14 +2,15 @@ import streamlit as st
 
 st.set_page_config(page_title="UstazMentor - 5-сынып", page_icon="💻", layout="wide")
 
-# Деректерді сақтауға арналған сессия базасы (Session State)
+# 1. Сессия базасын баптау (Сыныптар тізімі мен оқушы нәтижелері)
+if "classes_list" not in st.session_state:
+    st.session_state.classes_list = ["5 «А»", "5 «Ә»"]  # Бастапқыда 5А және 5Ә
+
 if "results_db" not in st.session_state:
     st.session_state.results_db = [
-        {"name": "Жайнарбек А.", "grade": "5 «Ә»", "topic": "1. Эргономика дегеніміз не", "task_type": "Тест", "score_num": 95, "score": "95 / 100 ұпай"},
-        {"name": "Айша Б.", "grade": "5 «Ә»", "topic": "1. Эргономика дегеніміз не", "task_type": "Тест", "score_num": 88, "score": "88 / 100 ұпай"},
-        {"name": "Нұрғанат О.", "grade": "5 «Ә»", "topic": "1. Эргономика дегеніміз не", "task_type": "Тест", "score_num": 92, "score": "92 / 100 ұпай"},
-        {"name": "Арман Қ.", "grade": "5 «А»", "topic": "1. Эргономика дегеніміз не", "task_type": "Тест", "score_num": 90, "score": "90 / 100 ұпай"},
-        {"name": "Азамат С.", "grade": "5 «Б»", "topic": "1. Эргономика дегеніміз не", "task_type": "Тест", "score_num": 82, "score": "82 / 100 ұпай"}
+        {"name": "Жайнарбек А.", "grade": "5 «Ә»", "topic": "1. Эргономика дегеніміз не", "task_type": "Тест", "score_num": 10, "score": "10 / 10 ұпай"},
+        {"name": "Айша Б.", "grade": "5 «Ә»", "topic": "1. Эргономика дегеніміз не", "task_type": "Тест", "score_num": 9, "score": "9 / 10 ұпай"},
+        {"name": "Арман Қ.", "grade": "5 «А»", "topic": "1. Эргономика дегеніміз не", "task_type": "Тест", "score_num": 8, "score": "8 / 10 ұпай"}
     ]
 
 # Заманауи дизайн стилі
@@ -22,13 +23,6 @@ st.markdown("""
         color: white;
         text-align: center;
         margin-bottom: 20px;
-    }
-    .metric-card {
-        background-color: #f8fafc;
-        padding: 15px;
-        border-radius: 10px;
-        border: 1px solid #e2e8f0;
-        text-align: center;
     }
     </style>
 """, unsafe_allow_html=True)
@@ -146,53 +140,67 @@ correct_answers = {
     ]
 }
 
-# Барлық тақырыптарды тізімге жинау
+# Барлық тақырыптар тізімі
 all_topics = []
 for sec, topics in sections_dict.items():
     all_topics.extend(topics)
 
-# Режимді таңдау (Оқушы / Мұғалім)
+# Режимді таңдау
 role = st.radio("Режимді таңдаңыз:", ["👨‍🎓 Оқушы режимі", "👩‍🏫 Мұғалім кабинеті"], horizontal=True)
 
 st.divider()
 
 if role == "👩‍🏫 Мұғалім кабинеті":
-    st.subheader("📊 Teacher Dashboard — Мұғалімнің басқару және аналитика панелі")
+    st.subheader("👩‍🏫 Мұғалімнің басқару кабинеті")
     
-    # ------------------ TEACHER DASHBOARD БӨЛІМІ ------------------
-    st.markdown("### 🏫 Сыныптар навигаторы")
-    selected_class = st.radio("Қарағыңыз келетін сыныпты таңдаңыз:", ["5 «А»", "5 «Ә»", "5 «Б»", "5 «В»"], horizontal=True)
-    
-    # Тек таңдалған сыныптың деректерін сүзгілеу
-    class_filtered_db = [r for r in st.session_state.results_db if r.get('grade') == selected_class]
-    
-    st.info(f"📌 Ағымдағы қаралып отырған сынып: **{selected_class}**")
-    
-    st.markdown(f"#### 📈 {selected_class} сыныбының нәтижелері мен визуалды деңгейі")
-    
-    if len(class_filtered_db) > 0:
-        for idx, res in enumerate(class_filtered_db, 1):
-            score_val = res.get('score_num', 80)
-            col1, col2, col3 = st.columns([2, 2, 3])
-            with col1:
-                st.write(f"**{idx}. {res['name']}**")
-            with col2:
-                st.write(f"Ұпайы: **{res['score']}**")
-            with col3:
-                st.progress(score_val / 100)
-    else:
-        st.warning(f"{selected_class} сыныбында әзірге сақталған оқушы нәтижелері жоқ.")
-    
+    # ------------------ ЖИНАҚЫ BАТЫРМА ТҮРІНДЕГІ TEACHER DASHBOARD ------------------
+    with st.popover("📊 Teacher Dashboard — Сыныптар мен нәтижелерді ашу", use_container_width=True):
+        st.markdown("### 🏫 Сыныптар навигаторы")
+        
+        # Сынып таңдау
+        selected_class = st.radio("Қарағыңыз келетін сыныпты таңдаңыз:", st.session_state.classes_list, horizontal=True)
+        
+        # Жаңа сынып қосу блогы
+        col_add1, col_add2 = st.columns([3, 1])
+        with col_add1:
+            new_class_input = st.text_input("Жаңа сынып қосу:", placeholder="Мысалы: 5 «Б» немесе 6 «А»", key="new_class_key")
+        with col_add2:
+            st.write("")
+            st.write("")
+            if st.button("➕ Қосу"):
+                if new_class_input.strip() and new_class_input.strip() not in st.session_state.classes_list:
+                    st.session_state.classes_list.append(new_class_input.strip())
+                    st.success(f"{new_class_input} сәтті қосылды!")
+                    st.rerun()
+
+        st.divider()
+        st.markdown(f"#### 📈 {selected_class} сыныбының нәтижелері мен визуалды деңгейі (Макс: 10 ұпай)")
+        
+        # Фильтрация
+        class_filtered_db = [r for r in st.session_state.results_db if r.get('grade') == selected_class]
+        
+        if len(class_filtered_db) > 0:
+            for idx, res in enumerate(class_filtered_db, 1):
+                score_val = res.get('score_num', 10)
+                c1, c2, c3 = st.columns([2, 2, 3])
+                with c1:
+                    st.write(f"**{idx}. {res['name']}**")
+                with c2:
+                    st.write(f"Ұпайы: **{res['score']}**")
+                with c3:
+                    st.progress(min(score_val / 10.0, 1.0))
+        else:
+            st.info(f"{selected_class} сыныбында әзірге сақталған оқушы нәтижелері жоқ.")
+
     st.divider()
     
-    # Мұғалімнің сабақ баптаулары мен сілтеме генераторы
+    # Мұғалімнің сабақ баптаулары
     st.subheader("⚙️ Сабақ баптаулары мен оқушы сілтемесі")
-    
     save_results_enabled = st.toggle("📊 Оқушы нәтижелерін базаға сақтау", value=True, help="Қосулы тұрса, оқушылардың аты-жөні мен нәтижелері тіркеледі.")
     
     selected_section = st.selectbox("Бөлімді таңдаңыз:", list(sections_dict.keys()))
     selected_topic = st.selectbox("Тақырыпты таңдаңыз:", sections_dict[selected_section])
-    timer_val = st.number_input("Сабаққа арналған таймер (минут):", value=15)
+    timer_val = st.number_input("Сабақ таймері (минут):", value=15)
         
     st.info(f"💡 **Таңдалған бөлім:** {selected_section} | **Тақырып:** {selected_topic}")
     st.write(f"📌 Нәтижелерді сақтау режимі: **{'ҚОСУЛЫ ✅' if save_results_enabled else 'ӨШІРУЛІ ❌'}**")
@@ -215,7 +223,7 @@ else:
     with col_name:
         student_name = st.text_input("Аты-жөніңізді енгізіңіз (Мысалы: Ерболат А.):", placeholder="Аты-жөніңіз...")
     with col_class:
-        student_grade = st.selectbox("Сыныбыңыз:", ["5 «Ә»", "5 «А»", "5 «Б»", "5 «В»"])
+        student_grade = st.selectbox("Сыныбыңыз:", st.session_state.classes_list)
     
     query_params = st.query_params
     default_topic = query_params.get("topic", all_topics[0])
@@ -262,8 +270,8 @@ else:
                         "grade": student_grade,
                         "topic": selected_topic,
                         "task_type": "Интерактивті веб-ойын",
-                        "score_num": 100,
-                        "score": "100 / 100 (Орындалды)"
+                        "score_num": 10,
+                        "score": "10 / 10 (Орындалды)"
                     })
                     st.info("💾 Нәтиже мұғалім базасына сәтті сақталды.")
     else:
@@ -377,17 +385,16 @@ else:
                             if ua == ca:
                                 score += 1
                         
-                        calc_score_num = score * 10
                         st.balloons()
-                        st.success(f"Құттықтаймыз, {student_name} ({student_grade})! Тест аяқталды. Сіздің нәтижеңіз: **{calc_score_num} / 100** ұпай 🌟")
+                        st.success(f"Құттықтаймыз, {student_name} ({student_grade})! Тест аяқталды. Сіздің нәтижеңіз: **{score} / 10** ұпай 🌟")
                         if save_mode:
                             st.session_state.results_db.append({
                                 "name": student_name,
                                 "grade": student_grade,
                                 "topic": selected_topic,
                                 "task_type": "Тест (10 сұрақ)",
-                                "score_num": calc_score_num,
-                                "score": f"{calc_score_num} / 100 ұпай"
+                                "score_num": score,
+                                "score": f"{score} / 10 ұпай"
                             })
                             st.info(f"💾 Нәтижеңіз мұғалім базасына сәтті сақталды.")
                         else:
@@ -486,18 +493,17 @@ else:
                         st.error("⚠️ Аты-жөніңізді жоғарғы жаққа жазыңыз!")
                     else:
                         filled_count = sum(1 for m in match_inputs if m != "-- Жауапты таңдаңыз --")
-                        calc_match_score = filled_count * 10
                         
                         st.balloons()
-                        st.success(f"Жарайсың, {student_name}! Сәйкестендіру тексерілді. Жинаған ұпайыңыз: **{calc_match_score} / 100** 🎯")
+                        st.success(f"Жарайсың, {student_name}! Сәйкестендіру тексерілді. Жинаған ұпайыңыз: **{filled_count} / 10** 🎯")
                         if save_mode:
                             st.session_state.results_db.append({
                                 "name": student_name,
                                 "grade": student_grade,
                                 "topic": selected_topic,
                                 "task_type": "Сәйкестендіру",
-                                "score_num": calc_match_score,
-                                "score": f"{calc_match_score} / 100 ұпай"
+                                "score_num": filled_count,
+                                "score": f"{filled_count} / 10 ұпай"
                             })
                             st.info(f"💾 Нәтижеңіз мұғалім базасына сәтті сақталды.")
                         else:
@@ -515,16 +521,15 @@ else:
                 if not student_name.strip():
                     st.error("⚠️ Ең алдымен аты-жөніңізді жазыңыз!")
                 else:
-                    calc_step_score = step * 10
                     st.balloons()
-                    st.success(f"Құттықтаймыз, {student_name}! Тренажер қадамы тіркелді: **{calc_step_score} / 100** ұпай 🚀")
+                    st.success(f"Құттықтаймыз, {student_name}! Тренажер қадамы тіркелді: **{step} / 10** ұпай 🚀")
                     if save_mode:
                         st.session_state.results_db.append({
                             "name": student_name,
                             "grade": student_grade,
                             "topic": selected_topic,
                             "task_type": "Тренажер",
-                            "score_num": calc_step_score,
-                            "score": f"{calc_step_score} / 100 ұпай"
+                            "score_num": step,
+                            "score": f"{step} / 10 ұпай"
                         })
                         st.info(f"💾 Нәтижеңіз мұғалім базасына сәтті сақталды.")
