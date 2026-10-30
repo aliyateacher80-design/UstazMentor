@@ -1,6 +1,6 @@
 import streamlit as st
 
-st.set_page_config(page_title="UstazMentor - Premium Landing", page_icon="🚀", layout="wide")
+st.set_page_config(page_title="UstazMentor - 5-сынып", page_icon="💻", layout="wide")
 
 # 1. Сессия базасын баптау
 if "classes_list" not in st.session_state:
@@ -12,91 +12,70 @@ if "results_db" not in st.session_state:
         {"name": "Айша Б.", "grade": "5 «Ә»", "topic": "1. Эргономика дегеніміз не", "task_type": "Тест", "score_num": 9, "score": "9 / 10 ұпай"}
     ]
 
-# 2. Premium Landing Page CSS Стильдері (Заманауи SaaS дизайн)
+# 2. Заманауи SaaS интерфейс стилі (Қараңғы, жинақы және премиум орналасу)
 st.markdown("""
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
 
-html, body, [data-testid="stAppViewContainer"] {
+html, body, [data-testid="stAppViewContainer"], .stApp {
     font-family: 'Plus Jakarta Sans', sans-serif !important;
-    background-color: #030712 !important;
-    color: #f3f4f6 !important;
+    background-color: #0b0f19 !important;
+    color: #e2e8f0 !important;
 }
 
 [data-testid="stHeader"] { background: transparent !important; }
 
-/* Hero Banner (Үлкен әсерлі баннер) */
-.hero-banner {
-    background: linear-gradient(135deg, rgba(15, 23, 42, 0.9) 0%, rgba(30, 58, 138, 0.6) 100%);
-    border: 1px solid rgba(59, 130, 246, 0.2);
-    border-radius: 24px;
-    padding: 40px;
-    text-align: center;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
-    margin-bottom: 30px;
+/* Карточкалар мен блоктардың сыртқы түрі */
+.ui-card {
+    background: #111827;
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
 }
 
-.hero-badge {
-    background: rgba(59, 130, 246, 0.15);
-    color: #60a5fa;
-    padding: 6px 16px;
-    border-radius: 50px;
-    font-size: 13px;
-    font-weight: 600;
-    display: inline-block;
-    margin-bottom: 15px;
-    border: 1px solid rgba(59, 130, 246, 0.3);
+/* Жоғарғы басты шағын панель */
+.top-bar {
+    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+    border: 1px solid rgba(56, 189, 248, 0.2);
+    border-radius: 16px;
+    padding: 20px 24px;
+    margin-bottom: 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
-.hero-title {
-    font-size: 38px;
-    font-weight: 800;
-    color: #ffffff;
-    margin-bottom: 12px;
-}
-
-.hero-subtitle {
-    font-size: 16px;
-    color: #9ca3af;
-    max-width: 700px;
-    margin: 0 auto;
-}
-
-/* Landing Card (Стильді карточкалар) */
-.landing-card {
-    background: rgba(17, 24, 39, 0.7);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 18px;
-    padding: 24px;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-    margin-bottom: 20px;
-}
-
-/* Батырмалар дизайны */
+/* Заманауи батырмалар */
 .stButton > button, .stFormSubmitButton > button {
-    background: linear-gradient(135deg, #2563eb 0%, #4f46e5 100%) !important;
+    background: linear-gradient(135deg, #0284c7 0%, #4f46e5 100%) !important;
     color: white !important;
-    border-radius: 12px !important;
-    font-weight: 700 !important;
+    border-radius: 10px !important;
+    font-weight: 600 !important;
     border: none !important;
-    padding: 0.6rem 1.2rem;
-    box-shadow: 0 4px 15px rgba(37, 99, 235, 0.4) !important;
+    padding: 0.5rem 1rem;
+    box-shadow: 0 4px 12px rgba(2, 132, 199, 0.3) !important;
     transition: all 0.2s ease;
 }
 
 .stButton > button:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(37, 99, 235, 0.6) !important;
+    transform: translateY(-1px);
+    opacity: 0.95;
 }
 </style>
 """, unsafe_allow_html=True)
 
-# --- HERO BANNER (Үлкен әсерлі тақырып пен баннер) ---
+# Жоғарғы заманауи панель (Header Shell)
 st.markdown("""
-    <div class="hero-banner">
-        <div class="hero-badge">🚀 5-сынып Информатика платформасы</div>
-        <div class="hero-title">UstazMentor v2.0</div>
-        <div class="hero-subtitle">Интерактивті тесттер, функционалдық тапсырмалар, ойындар және мұғалімге арналған автоматтандырылған басқару панелі.</div>
+    <div class="top-bar">
+        <div>
+            <h2 style="margin: 0; color: #ffffff; font-size: 22px;">💻 UstazMentor</h2>
+            <p style="margin: 0; color: #94a3b8; font-size: 13px;">5-сынып Информатика | Оқыту және басқару платформасы</p>
+        </div>
+        <div>
+            <span style="background: rgba(56, 189, 248, 0.1); color: #38bdf8; padding: 6px 12px; border-radius: 20px; font-size: 12px; border: 1px solid rgba(56, 189, 248, 0.2);">v2.0 Active</span>
+        </div>
     </div>
 """, unsafe_allow_html=True)
 
@@ -126,10 +105,10 @@ all_topics = []
 for sec, topics in sections_dict.items():
     all_topics.extend(topics)
 
-# Навигациялық режим таңдау
-col_nav1, col_nav2, col_nav3 = st.columns([1, 2, 1])
-with col_nav2:
-    role = st.radio("Жұмыс режимін таңдаңыз:", ["👨‍🎓 Оқушы режимі", "👩‍🏫 Мұғалім кабинеті"], horizontal=True)
+# Режимді таңдау блогы
+col_r1, col_r2 = st.columns([1, 1])
+with col_r1:
+    role = st.radio("Режимді таңдаңыз:", ["👨‍🎓 Оқушы режимі", "👩‍🏫 Мұғалім кабинеті"], horizontal=True)
 
 st.divider()
 
