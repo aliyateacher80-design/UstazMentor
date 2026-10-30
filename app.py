@@ -15,16 +15,233 @@ if "results_db" not in st.session_state:
 
 # Заманауи дизайн стилі
 st.markdown("""
-    <style>
-    .main-header {
-        background: linear-gradient(90deg, #4f46e5 0%, #3b82f6 100%);
-        padding: 25px;
-        border-radius: 12px;
-        color: white;
-        text-align: center;
-        margin-bottom: 20px;
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+:root {
+    --ink: #172554;
+    --muted: #64748b;
+    --blue: #2563eb;
+    --cyan: #06b6d4;
+    --line: #e2e8f0;
+    --surface: rgba(255,255,255,.88);
+}
+
+/* Жалпы бет */
+html, body, [class*="css"] {
+    font-family: 'Manrope', 'Plus Jakarta Sans', sans-serif;
+}
+.stApp {
+    background:
+      radial-gradient(circle at 8% 2%, rgba(6,182,212,.12), transparent 26%),
+      radial-gradient(circle at 95% 8%, rgba(37,99,235,.12), transparent 28%),
+      linear-gradient(135deg, #f5f8ff 0%, #eef4ff 48%, #f8fbff 100%);
+    color: var(--ink);
+}
+.block-container {
+    max-width: 1450px;
+    padding-top: 1.8rem;
+    padding-bottom: 3rem;
+}
+
+/* Жоғарғы тақырып баннері */
+.main-header {
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(120deg, #101d45 0%, #173b78 52%, #087eaa 100%);
+    padding: 34px 38px;
+    border: 1px solid rgba(255,255,255,.22);
+    border-radius: 26px;
+    color: white;
+    text-align: left;
+    margin: 0 0 28px 0;
+    box-shadow: 0 18px 45px rgba(23,59,120,.20);
+}
+.main-header:before {
+    content: "";
+    position: absolute;
+    width: 310px;
+    height: 310px;
+    right: -65px;
+    top: -180px;
+    border-radius: 50%;
+    background: rgba(34,211,238,.20);
+    filter: blur(2px);
+}
+.main-header:after {
+    content: "✦";
+    position: absolute;
+    right: 9%;
+    bottom: 8px;
+    font-size: 100px;
+    line-height: 1;
+    color: rgba(255,255,255,.10);
+}
+.main-header h1 {
+    position: relative;
+    z-index: 1;
+    margin: 0 0 9px 0;
+    font-size: clamp(28px, 4vw, 43px);
+    font-weight: 800;
+    letter-spacing: -1.5px;
+}
+.main-header p {
+    position: relative;
+    z-index: 1;
+    margin: 0;
+    color: rgba(255,255,255,.82);
+    font-size: 15px;
+    line-height: 1.6;
+}
+
+/* Тақырыптар */
+h1, h2, h3, h4 {
+    color: #142653;
+    font-weight: 800 !important;
+    letter-spacing: -.45px;
+}
+[data-testid="stSubheader"] {
+    color: #183568;
+}
+
+/* Контейнерлер мен карточкалар */
+div[data-testid="stVerticalBlockBorderWrapper"] {
+    background: var(--surface);
+    border: 1px solid rgba(203,213,225,.75);
+    border-radius: 20px;
+    box-shadow: 0 8px 26px rgba(30,64,175,.055);
+}
+div[data-testid="stExpander"] {
+    background: rgba(255,255,255,.82);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+}
+div[data-testid="stAlert"] {
+    border-radius: 15px;
+    border: 1px solid rgba(148,163,184,.20);
+}
+
+/* Батырмалар */
+.stButton > button, .stFormSubmitButton > button {
+    border: 0;
+    border-radius: 12px;
+    padding: .62rem 1.15rem;
+    font-weight: 700;
+    color: white;
+    background: linear-gradient(110deg, #2563eb, #0891b2);
+    box-shadow: 0 7px 18px rgba(37,99,235,.18);
+    transition: transform .18s ease, box-shadow .18s ease, filter .18s ease;
+}
+.stButton > button:hover, .stFormSubmitButton > button:hover {
+    color: white;
+    transform: translateY(-2px);
+    filter: brightness(1.06);
+    box-shadow: 0 11px 24px rgba(37,99,235,.25);
+    border: 0;
+}
+.stButton > button:focus, .stFormSubmitButton > button:focus {
+    outline: 3px solid rgba(6,182,212,.22);
+    outline-offset: 2px;
+}
+
+/* Енгізу өрістері */
+.stTextInput input, .stNumberInput input, .stSelectbox [data-baseweb="select"],
+.stTextArea textarea {
+    border-radius: 12px !important;
+}
+.stTextInput input:focus, .stNumberInput input:focus, .stTextArea textarea:focus {
+    border-color: #38bdf8 !important;
+    box-shadow: 0 0 0 3px rgba(14,165,233,.12) !important;
+}
+label, [data-testid="stWidgetLabel"] {
+    color: #33466d !important;
+    font-weight: 650 !important;
+}
+
+/* Навигация және қойындылар */
+.stTabs [data-baseweb="tab-list"] {
+    gap: 8px;
+    background: rgba(226,237,255,.72);
+    padding: 7px;
+    border-radius: 15px;
+}
+.stTabs [data-baseweb="tab"] {
+    height: 43px;
+    border-radius: 10px;
+    color: #496080;
+    font-weight: 700;
+}
+.stTabs [aria-selected="true"] {
+    background: white !important;
+    color: #1d4ed8 !important;
+    box-shadow: 0 3px 12px rgba(30,64,175,.10);
+}
+.stTabs [data-baseweb="tab-highlight"] {
+    background: transparent;
+}
+
+/* Радио батырмалар */
+div[role="radiogroup"] {
+    gap: 10px;
+}
+div[role="radiogroup"] label {
+    background: rgba(255,255,255,.78);
+    border: 1px solid #dbeafe;
+    border-radius: 12px;
+    padding: 8px 13px;
+}
+
+/* Прогресс */
+.stProgress > div > div > div > div {
+    background: linear-gradient(90deg, #2563eb, #06b6d4);
+    border-radius: 20px;
+}
+.stProgress > div > div {
+    background: #dbeafe;
+    border-radius: 20px;
+}
+
+/* Бөлгіш және код блогы */
+hr {
+    border-color: rgba(148,163,184,.28);
+    margin: 1.4rem 0;
+}
+[data-testid="stCode"] {
+    border-radius: 14px;
+    border: 1px solid #dbeafe;
+}
+
+/* Сол жақ панель */
+section[data-testid="stSidebar"] {
+    background: linear-gradient(180deg, #10234c 0%, #142f60 100%);
+    border-right: 1px solid rgba(255,255,255,.08);
+}
+section[data-testid="stSidebar"] * {
+    color: #eef6ff;
+}
+section[data-testid="stSidebar"] [data-testid="stMarkdownContainer"] p {
+    color: #d8e8ff;
+}
+
+/* Мобильді экран */
+@media (max-width: 768px) {
+    .block-container {
+        padding: 1rem .85rem 2rem .85rem;
     }
-    </style>
+    .main-header {
+        padding: 25px 22px;
+        border-radius: 19px;
+    }
+    .main-header p {
+        font-size: 13px;
+    }
+    .stTabs [data-baseweb="tab"] {
+        padding-left: 9px;
+        padding-right: 9px;
+        font-size: 12px;
+    }
+}
+</style>
 """, unsafe_allow_html=True)
 
 st.markdown("""
