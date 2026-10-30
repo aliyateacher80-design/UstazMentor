@@ -9,64 +9,58 @@ if "classes_list" not in st.session_state:
 if "results_db" not in st.session_state:
     st.session_state.results_db = [
         {"name": "Жайнарбек А.", "grade": "5 «Ә»", "topic": "1. Эргономика дегеніміз не", "task_type": "Тест", "score_num": 10, "score": "10 / 10 ұпай"},
-        {"name": "Айша Б.", "grade": "5 «Ә»", "topic": "1. Эргономика дегеніміз не", "task_type": "Тест", "score_num": 9, "score": "9 / 10 ұпай"},
-        {"name": "Арман Қ.", "grade": "5 «А»", "topic": "1. Эргономика дегеніміз не", "task_type": "Тест", "score_num": 8, "score": "8 / 10 ұпай"}
+        {"name": "Айша Б.", "grade": "5 «Ә»", "topic": "1. Эргономика дегеніміз не", "task_type": "Тест", "score_num": 9, "score": "9 / 10 ұпай"}
     ]
 
-# 2. Таза әрі заманауи премиум стиль (Streamlit компоненттерін бұзмайтын сенімді нұсқа)
+# 2. Мүлдем жаңа, таза карточкалық стиль (Шаблоннан ерекшеленетін дизайн)
 st.markdown("""
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
 
 html, body, [data-testid="stAppViewContainer"] {
-    font-family: 'Inter', sans-serif !important;
+    font-family: 'Plus Jakarta Sans', sans-serif !important;
+    background-color: #f8fafc !important;
 }
 
-/* Жоғарғы басты баннер */
-.main-header {
-    background: linear-gradient(135deg, #0284c7 0%, #4f46e5 100%);
-    padding: 24px;
+[data-testid="stHeader"] { background: transparent !important; }
+
+/* Карточкалық контейнерлер */
+.custom-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
     border-radius: 16px;
-    color: white;
-    box-shadow: 0 10px 25px rgba(2, 132, 199, 0.2);
+    padding: 24px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
     margin-bottom: 20px;
 }
 
-.main-header h2 {
-    color: white !important;
-    font-weight: 700 !important;
-}
-
-.main-header p {
-    color: #e0f2fe !important;
-    font-size: 15px !important;
-}
-
-/* Негізгі батырмалар дизайны */
+/* Заманауи батырмалар */
 .stButton > button, .stFormSubmitButton > button {
-    background: linear-gradient(135deg, #0284c7 0%, #4f46e5 100%) !important;
+    background-color: #0f172a !important;
     color: white !important;
     border-radius: 10px !important;
     font-weight: 600 !important;
     border: none !important;
-    box-shadow: 0 4px 12px rgba(2, 132, 199, 0.3) !important;
+    padding: 0.5rem 1rem;
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.15) !important;
     transition: all 0.2s ease;
 }
 
 .stButton > button:hover {
-    opacity: 0.9;
+    background-color: #334155 !important;
     transform: translateY(-1px);
 }
 </style>
 """, unsafe_allow_html=True)
 
-# Басты баннер
-st.markdown("""
-    <div class="main-header">
-        <h2>UstazMentor 💻 5-сынып</h2>
-        <p>Функционалдық сауаттылық, тесттер, сәйкестендіру және интерактивті тренажерлар</p>
-    </div>
-""", unsafe_allow_html=True)
+# Жоғарғы таза тақырып (Баннер орнына минималистік 헤더)
+col_logo, col_title = st.columns([1, 5])
+with col_logo:
+    st.markdown("### 💻 **Ustaz**")
+with col_title:
+    st.markdown("### **Mentor** <span style='font-size: 14px; color: #64748b;'>5-сынып информатика платформасы</span>", unsafe_allow_html=True)
+
+st.divider()
 
 sections_dict = {
     "📁 Бөлім: Ақпарат және компьютер": [
@@ -98,7 +92,7 @@ role = st.radio("Режимді таңдаңыз:", ["👨‍🎓 Оқушы р�
 st.divider()
 
 if role == "👩‍🏫 Мұғалім кабинеті":
-    st.subheader("👩‍🏫 Мұғалімнің басқару кабинеті")
+    st.markdown("### 👩‍🏫 Мұғалімнің басқару кабинеті")
     
     with st.popover("📊 Teacher Dashboard — Сыныптар мен нәтижелерді ашу", use_container_width=True):
         st.markdown("### 🏫 Сыныптар навигаторы")
@@ -130,7 +124,7 @@ if role == "👩‍🏫 Мұғалім кабинеті":
             st.info(f"{selected_class} сыныбында әзірге сақталған нәтиже жоқ.")
 
     st.divider()
-    st.subheader("⚙️ Сабақ баптаулары мен оқушы сілтемесі")
+    st.markdown("### ⚙️ Сабақ баптаулары мен оқушы сілтемесі")
     save_results_enabled = st.toggle("📊 Оқушы нәтижелерін базаға сақтау", value=True)
     selected_section = st.selectbox("Бөлімді таңдаңыз:", list(sections_dict.keys()))
     selected_topic = st.selectbox("Тақырыпты таңдаңыз:", sections_dict[selected_section])
@@ -147,7 +141,7 @@ if role == "👩‍🏫 Мұғалім кабинеті":
             st.rerun()
 
 else:
-    st.subheader("👨‍🎓 Оқушы кабинеті")
+    st.markdown("### 👨‍🎓 Оқушы кабинеті")
     col_name, col_class = st.columns([2, 1])
     with col_name:
         student_name = st.text_input("Аты-жөніңізді енгізіңіз:", placeholder="Аты-жөніңіз...")
