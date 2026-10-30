@@ -13,79 +13,124 @@ if "results_db" not in st.session_state:
         {"name": "Арман Қ.", "grade": "5 «А»", "topic": "1. Эргономика дегеніміз не", "task_type": "Тест", "score_num": 8, "score": "8 / 10 ұпай"}
     ]
 
-# 2. Заманауи Dark Glassmorphism стильдері (StudySync стилі)
+# 2. Дәл суреттегідей Dark Glassmorphism (StudySync) стильдері
 st.markdown("""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 
+/* Терең қараңғы көк фон және неонды градиент */
 html, body, [data-testid="stAppViewContainer"], .stApp {
-    background: #090d16 !important;
+    background: #060913 !important;
     background-image: 
-        radial-gradient(at 0% 0%, rgba(14, 165, 233, 0.15) 0px, transparent 50%),
-        radial-gradient(at 100% 100%, rgba(99, 102, 241, 0.15) 0px, transparent 50%) !important;
+        radial-gradient(at 10% 10%, rgba(14, 165, 233, 0.15) 0px, transparent 50%),
+        radial-gradient(at 90% 90%, rgba(99, 102, 241, 0.15) 0px, transparent 50%) !important;
     font-family: 'Plus Jakarta Sans', sans-serif !important;
     color: #f1f5f9 !important;
 }
 
 [data-testid="stHeader"] { display: none !important; }
 
+/* Жоғарғы басты баннер (Glassmorphism) */
 .main-header {
-    background: rgba(15, 23, 42, 0.8) !important;
-    backdrop-filter: blur(16px) !important;
-    border: 1px solid rgba(56, 189, 248, 0.25) !important;
-    border-radius: 20px !important;
-    padding: 30px !important;
+    background: rgba(15, 23, 42, 0.85) !important;
+    backdrop-filter: blur(20px) !important;
+    -webkit-backdrop-filter: blur(20px) !important;
+    border: 1px solid rgba(56, 189, 248, 0.3) !important;
+    border-radius: 22px !important;
+    padding: 32px !important;
     color: white !important;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6) !important;
-    margin-bottom: 25px !important;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8) !important;
+    margin-bottom: 28px !important;
 }
 
 .main-header h1 {
-    font-size: 2.4rem !important; font-weight: 800 !important; color: #ffffff !important;
+    font-size: 2.5rem !important; 
+    font-weight: 800 !important; 
+    color: #ffffff !important;
+    letter-spacing: -0.5px;
 }
+
 .main-header p {
-    color: #38bdf8 !important; font-size: 15px !important; font-weight: 600 !important;
+    color: #38bdf8 !important; 
+    font-size: 15px !important; 
+    font-weight: 600 !important;
 }
 
+/* Барлық мәтіндер мен тақырыптардың ақ болуы */
 h1, h2, h3, h4, p, span, label, [data-testid="stWidgetLabel"] {
-    color: #f8fafc !important; font-weight: 600 !important;
+    color: #f8fafc !important; 
+    font-weight: 600 !important;
 }
 
-div[data-testid="stVerticalBlockBorderWrapper"], div[data-testid="stExpander"], .stPopover > button {
-    background: rgba(15, 23, 42, 0.65) !important;
-    backdrop-filter: blur(12px) !important;
-    border: 1px solid rgba(56, 189, 248, 0.2) !important;
-    border-radius: 16px !important;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4) !important;
+/* Контейнерлер, поповерлер және экспандерлер */
+div[data-testid="stVerticalBlockBorderWrapper"], div[data-testid="stExpander"], 
+[data-testid="stPopoverContainer"], div[data-baseweb="popover"] > div {
+    background: rgba(15, 23, 42, 0.75) !important;
+    border: 1px solid rgba(56, 189, 248, 0.25) !important;
+    border-radius: 18px !important;
+    backdrop-filter: blur(16px) !important;
+    color: #f8fafc !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5) !important;
 }
 
-.stTextInput input, .stNumberInput input, .stSelectbox [data-baseweb="select"], .stTextArea textarea {
-    background-color: rgba(30, 41, 59, 0.7) !important;
-    border: 1px solid rgba(56, 189, 248, 0.3) !important;
-    border-radius: 12px !important; color: #f8fafc !important;
+/* Popover ашу батырмасы */
+.stPopover > button {
+    background: rgba(30, 41, 59, 0.9) !important;
+    border: 1px solid rgba(56, 189, 248, 0.4) !important;
+    color: #f8fafc !important;
+    border-radius: 12px !important;
 }
 
+/* Барлық енгізу өрістері мен ашылмалы менюлердің (selectbox) ақ фонын толық жою */
+.stTextInput input, .stNumberInput input, .stTextArea textarea, 
+div[data-baseweb="select"] > div {
+    background-color: rgba(30, 41, 59, 0.85) !important;
+    border: 1px solid rgba(56, 189, 248, 0.35) !important;
+    border-radius: 12px !important; 
+    color: #ffffff !important;
+}
+
+/* Selectbox ішіндегі мәтін түсі */
+div[data-baseweb="select"] span {
+    color: #ffffff !important;
+}
+
+/* Радио батырмалар блогы */
 div[role="radiogroup"] label {
-    background: rgba(30, 41, 59, 0.6) !important;
-    border: 1px solid rgba(56, 189, 248, 0.2) !important;
-    border-radius: 12px !important; padding: 8px 16px !important; color: #e2e8f0 !important;
+    background: rgba(30, 41, 59, 0.7) !important;
+    border: 1px solid rgba(56, 189, 248, 0.25) !important;
+    border-radius: 12px !important; 
+    padding: 9px 16px !important; 
+    color: #e2e8f0 !important;
 }
 
+/* Неонды көк градиентті батырмалар */
 .stButton > button, .stFormSubmitButton > button {
     background: linear-gradient(135deg, #0284c7 0%, #6366f1 100%) !important;
-    border: 1px solid rgba(255, 255, 255, 0.2) !important;
-    border-radius: 12px !important; color: #ffffff !important; font-weight: 700 !important;
-    box-shadow: 0 4px 20px rgba(2, 132, 199, 0.4) !important;
+    border: 1px solid rgba(255, 255, 255, 0.25) !important;
+    border-radius: 12px !important; 
+    color: #ffffff !important; 
+    font-weight: 700 !important;
+    box-shadow: 0 6px 20px rgba(2, 132, 199, 0.45) !important;
+    transition: all 0.2s ease !important;
 }
 
+.stButton > button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(2, 132, 199, 0.65) !important;
+}
+
+/* Қойындылар (Tabs) дизайны */
 .stTabs [data-baseweb="tab-list"] {
     background: rgba(15, 23, 42, 0.8) !important;
-    border: 1px solid rgba(56, 189, 248, 0.2) !important;
+    border: 1px solid rgba(56, 189, 248, 0.25) !important;
     border-radius: 14px !important;
     padding: 6px !important;
 }
 .stTabs [aria-selected="true"] {
-    background: #0284c7 !important; color: #ffffff !important;
+    background: #0284c7 !important; 
+    color: #ffffff !important;
+    border-radius: 10px !important;
 }
 </style>
 """, unsafe_allow_html=True)
@@ -94,28 +139,21 @@ div[role="radiogroup"] label {
 st.markdown("""
     <div class="main-header">
         <h1>UstazMentor 💻 5-сынып</h1>
-        <p>⚡ Функционалдық сауаттылық, тесттер, сәйкестендіру және интерактивті тренажерлар</p>
+        <p>⚡ StudySync AI-Powered Learning Platform — Функционалдық сауаттылық және тренажерлар</p>
     </div>
 """, unsafe_allow_html=True)
 
-# Бөлімдер мен 14 тақырып тізімі
 sections_dict = {
     "📁 Бөлім: Ақпарат және компьютер": [
-        "1. Эргономика дегеніміз не",
-        "2. Эргономика дегеніміз не. Практикалық жұмыс",
-        "3. Біздің айналамыздағы ақпарат",
-        "4. Интернетте ақпаратты іздеу",
-        "5. Интернетте ақпаратты іздеу. Практикалық жұмыс",
-        "6. Есептеу техникасының даму тарихы",
+        "1. Эргономика дегеніміз не", "2. Эргономика дегеніміз не. Практикалық жұмыс",
+        "3. Біздің айналамыздағы ақпарат", "4. Интернетте ақпаратты іздеу",
+        "5. Интернетте ақпаратты іздеу. Практикалық жұмыс", "6. Есептеу техникасының даму тарихы",
         "7. Есептеу техникасының даму тарихы"
     ],
     "📁 Бөлім: Цифрлық кескіндер": [
-        "8. Компьютерлік графика және оның түрлері",
-        "9. Компьютерлік графика және оның түрлері. Практикалық жұмыс",
-        "10. Растрлық кескіндерді құру",
-        "11. Растрлық кескіндерді құру. Практикалық жұмыс",
-        "12. Растрлық кескіндерді өңдеу құралдары",
-        "13. Растрлық кескіндерді өңдеу құралдары. Практикалық жұмыс",
+        "8. Компьютерлік графика және оның түрлері", "9. Компьютерлік графика және оның түрлері. Практикалық жұмыс",
+        "10. Растрлық кескіндерді құру", "11. Растрлық кескіндерді құру. Практикалық жұмыс",
+        "12. Растрлық кескіндерді өңдеу құралдары", "13. Растрлық кескіндерді өңдеу құралдары. Практикалық жұмыс",
         "14. Графика және жасанды интеллект. Практикалық жұмыс"
     ]
 }
