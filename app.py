@@ -12,70 +12,99 @@ if "results_db" not in st.session_state:
         {"name": "Айша Б.", "grade": "5 «Ә»", "topic": "1. Эргономика дегеніміз не", "task_type": "Тест", "score_num": 9, "score": "9 / 10 ұпай"}
     ]
 
-# 2. Заманауи SaaS интерфейс стилі (Қараңғы, жинақы және премиум орналасу)
+# 2. Суреттегідей алтын жалатылған рамкалы, футуристік ұлттық стиль (Futuristic Kazakh Card UI)
 st.markdown("""
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 
 html, body, [data-testid="stAppViewContainer"], .stApp {
     font-family: 'Plus Jakarta Sans', sans-serif !important;
-    background-color: #0b0f19 !important;
-    color: #e2e8f0 !important;
+    background: #090d16 !important;
+    background-image: 
+        radial-gradient(at 50% 0%, rgba(212, 175, 55, 0.12) 0px, transparent 60%),
+        radial-gradient(at 10% 90%, rgba(2, 132, 199, 0.1) 0px, transparent 50%) !important;
+    color: #f1f5f9 !important;
 }
 
 [data-testid="stHeader"] { background: transparent !important; }
 
-/* Карточкалар мен блоктардың сыртқы түрі */
-.ui-card {
-    background: #111827;
-    border: 1px solid rgba(255, 255, 255, 0.07);
-    border-radius: 16px;
-    padding: 20px;
-    margin-bottom: 16px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+/* Суреттегідей алтын жиекті үлкен баннер (Futuristic Gold Frame Banner) */
+.gold-hero-banner {
+    background: linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(30, 41, 59, 0.9) 100%);
+    border: 2px solid rgba(212, 175, 55, 0.4);
+    border-radius: 24px;
+    padding: 35px;
+    text-align: center;
+    box-shadow: 0 0 30px rgba(212, 175, 55, 0.15), inset 0 0 15px rgba(212, 175, 55, 0.1);
+    margin-bottom: 25px;
+    position: relative;
 }
 
-/* Жоғарғы басты шағын панель */
-.top-bar {
-    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-    border: 1px solid rgba(56, 189, 248, 0.2);
-    border-radius: 16px;
-    padding: 20px 24px;
-    margin-bottom: 24px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+.gold-badge {
+    background: rgba(212, 175, 55, 0.15);
+    color: #facc15;
+    padding: 6px 18px;
+    border-radius: 30px;
+    font-size: 13px;
+    font-weight: 700;
+    display: inline-block;
+    margin-bottom: 15px;
+    border: 1px solid rgba(212, 175, 55, 0.4);
+    letter-spacing: 0.5px;
 }
 
-/* Заманауи батырмалар */
+/* Карточкалар мен контейнерлер */
+.stTabs [data-baseweb="tab-list"] {
+    gap: 12px;
+}
+.stTabs [data-baseweb="tab"] {
+    background-color: rgba(15, 23, 42, 0.8) !important;
+    border-radius: 12px !important;
+    color: #cbd5e1 !important;
+    border: 1px solid rgba(212, 175, 55, 0.2) !important;
+    padding: 10px 22px;
+    font-weight: 600;
+}
+.stTabs [aria-selected="true"] {
+    background: linear-gradient(135deg, #d4af37 0%, #ca8a04 100%) !important;
+    color: #0f172a !important;
+    font-weight: 800 !important;
+    box-shadow: 0 4px 20px rgba(212, 175, 55, 0.4);
+}
+
+/* Алтын түсті неон батырмалар */
 .stButton > button, .stFormSubmitButton > button {
-    background: linear-gradient(135deg, #0284c7 0%, #4f46e5 100%) !important;
-    color: white !important;
-    border-radius: 10px !important;
-    font-weight: 600 !important;
-    border: none !important;
-    padding: 0.5rem 1rem;
-    box-shadow: 0 4px 12px rgba(2, 132, 199, 0.3) !important;
-    transition: all 0.2s ease;
+    background: linear-gradient(135deg, #d4af37 0%, #b45309 100%) !important;
+    color: #ffffff !important;
+    border-radius: 12px !important;
+    font-weight: 700 !important;
+    border: 1px solid rgba(255, 215, 0, 0.4) !important;
+    padding: 0.6rem 1.4rem;
+    box-shadow: 0 4px 20px rgba(212, 175, 55, 0.3) !important;
+    transition: all 0.25s ease;
 }
 
 .stButton > button:hover {
-    transform: translateY(-1px);
-    opacity: 0.95;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 25px rgba(212, 175, 55, 0.5) !important;
+}
+
+/* Енгізу өрістері */
+.stTextInput input, .stSelectbox [data-baseweb="select"] > div {
+    background-color: rgba(15, 23, 42, 0.9) !important;
+    border: 1px solid rgba(212, 175, 55, 0.3) !important;
+    border-radius: 12px !important;
+    color: white !important;
 }
 </style>
 """, unsafe_allow_html=True)
 
-# Жоғарғы заманауи панель (Header Shell)
+# Суреттегідей әсерлі алтын жиекті баннер
 st.markdown("""
-    <div class="top-bar">
-        <div>
-            <h2 style="margin: 0; color: #ffffff; font-size: 22px;">💻 UstazMentor</h2>
-            <p style="margin: 0; color: #94a3b8; font-size: 13px;">5-сынып Информатика | Оқыту және басқару платформасы</p>
-        </div>
-        <div>
-            <span style="background: rgba(56, 189, 248, 0.1); color: #38bdf8; padding: 6px 12px; border-radius: 20px; font-size: 12px; border: 1px solid rgba(56, 189, 248, 0.2);">v2.0 Active</span>
-        </div>
+    <div class="gold-hero-banner">
+        <div class="gold-badge">✨ ИННОВАЦИЯЛЫҚ ПЕДАГОГИКАЛЫҚ ЖҮЙЕ</div>
+        <h1 style="margin: 10px 0 8px 0; color: #ffffff; font-size: 34px; font-weight: 800; text-shadow: 0 2px 10px rgba(212,175,55,0.3);">UstazMentor 💻</h1>
+        <p style="margin: 0; color: #cbd5e1; font-size: 16px;">5-сынып информатика пәніне арналған интерактивті тапсырмалар мен автоматтандырылған басқару платформасы.</p>
     </div>
 """, unsafe_allow_html=True)
 
@@ -105,7 +134,7 @@ all_topics = []
 for sec, topics in sections_dict.items():
     all_topics.extend(topics)
 
-# Режимді таңдау блогы
+# Режим таңдау бөлігі
 col_r1, col_r2 = st.columns([1, 1])
 with col_r1:
     role = st.radio("Режимді таңдаңыз:", ["👨‍🎓 Оқушы режимі", "👩‍🏫 Мұғалім кабинеті"], horizontal=True)
